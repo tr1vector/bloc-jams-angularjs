@@ -26,20 +26,35 @@
 		 
 		   currentSong = song;
 		};
-
+		/**
+		* @function playSong
+		* @desc Plays current song and sets boolean value of song playing to true
+		* @param {Object} song
+		*/
+		var playSong = function(song) {
+			currentBuzzObject.play();
+			song.playing = true;
+		}
+		/**
+		* @method SongPlayer.play
+		* @desc Sets/Plays song if song clicked is not current song and plays song if current song is paused
+		* @param {Object} song
+		*/
 		SongPlayer.play = function(song) {
 			if (currentSong !== song) {
 				setSong(song);
-				currentBuzzObject.play();
-				song.playing = true;
+				playSong(song);
 			} else if (currentSong === song) {
 				if (currentBuzzObject.isPaused()) {
-					currentBuzzObject.play();
-					song.playing = true;
+					playSong(song);
 				}
 			}	
 		};
-
+		/**
+		* @method SongPlayer.pause
+		* @desc Pauses song if pause button is clicked and changes boolean value of playing song to false
+		* @param {Object} song
+		*/
 		SongPlayer.pause = function(song) {
 			currentBuzzObject.pause();
 			song.playing = false;
