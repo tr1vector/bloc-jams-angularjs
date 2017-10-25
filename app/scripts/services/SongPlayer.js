@@ -73,6 +73,9 @@
 			} else if (SongPlayer.currentSong === song) {
 				if (currentBuzzObject.isPaused()) {
 					playSong(song);
+				} else {
+					currentBuzzObject.pause();
+					song.playing = false;
 				}
 			}	
 		};
@@ -96,7 +99,9 @@
      		currentSongIndex--;
 
      		 if (currentSongIndex < 0) {
-         		stopSong(song);
+     		 	if(currentSongIndex + 1 === 0){
+     		 		stopSong(song);
+     		 	}
      		 } else {
      		 	var song = currentAlbum.songs[currentSongIndex];
          		setSong(song);
