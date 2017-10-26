@@ -72,6 +72,11 @@
  		*/
 		SongPlayer.currentTime = null;
 		/**
+ 		* @desc Current volume value set on the player bar
+ 		* @type {Number}
+ 		*/
+		SongPlayer.volume = 80;
+		/**
 		* @method SongPlayer.play
 		* @desc Sets/Plays song if song clicked is not current song and plays song if current song is paused
 		* @param {Object} song
@@ -146,6 +151,17 @@
      		if (currentBuzzObject) {
          		currentBuzzObject.setTime(time);
      		}
+ 		};
+ 		/**
+ 		* @function setVolume
+ 		* @desc Set current volume (number) for player bar
+ 		* @param {Number} time
+ 		*/
+ 		SongPlayer.setVolume = function(volume) {
+ 			if (currentBuzzObject){
+ 				currentBuzzObject.setVolume(volume);
+ 			}
+ 			SongPlayer.volume = volume;
  		};
 
 		return SongPlayer;
