@@ -19,7 +19,10 @@
         	templateUrl: '/templates/directives/seek_bar.html',
         	replace: true,
         	restrict: 'E',
-         	scope: { },
+         	scope: { 
+                onChange: '&'
+            },
+
          	link: function(scope, element, attributes) {
                  /**
                   * @desc Holds current value of the seekbar.  Default is set to 0.
@@ -33,11 +36,27 @@
                   * @desc This value contains the matching directive element value at <seek-bar></seek-bar in the view
                   */
 	            var seekBar = $(element);
-	             /**
-                  * @function percentString
-                  * @desc Calculates the percent of the seekbar from value to max - 0-100
-                  * @param {Object} seekBar, event from seek bar view
-                  */
+                /**
+                * @method $observe
+                * @desc Notifies the directive of changes to scope.value
+                * @param empty
+                */
+                attributes.$observe('value', function(newValue) {
+                    scope.value = newValue;
+                });
+                /**
+                * @method $observe
+                * @desc Notifies the directive of changes to scope.max
+                * @param empty
+                */
+                attributes.$observe('max', function(newValue) {
+                    scope.max = newValue;
+                });
+	            /**
+                * @function percentString
+                * @desc Calculates the percent of the seekbar from value to max - 0-100
+                * @param {Object} seekBar, event from seek bar view
+                */
 	            var percentString = function () {
 	                var value = scope.value;
 	                var max = scope.max;
@@ -68,6 +87,7 @@
 	            scope.onClickSeekBar = function(event) {
             		var percent = calculatePercent(seekBar, event);
             		scope.value = percent * scope.max;
+                    notifyOnChange(scope.value);
          		};
                  /**
                    * @method trackThumb
@@ -79,6 +99,7 @@
         				var percent = calculatePercent(seekBar, event);
                         scope.$apply(function() {
                             scope.value = percent * scope.max;
+                            notifyOnChange(scope.value);
                         });
         			
     				});
@@ -88,6 +109,16 @@
         				$document.unbind('mouseup.thumb');
     				});
 				};
+                /**
+                * @function notifyOnChange
+                * @desc Checks to make sure scope.onChange is a function and passes the new value in the view
+                * @param newValue
+                */
+                var notifyOnChange = function(newValue) {
+                    if (typeof scope.onChange === 'function') {
+                        scope.onChange({value: newValue});
+                    }
+                };
          	}
     	};
 	}

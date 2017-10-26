@@ -1,5 +1,5 @@
 (function (){
-	function SongPlayer(Fixtures) {
+	function SongPlayer($rootScope, Fixtures) {
 		var SongPlayer = {};
 		/**
 		* @function currentAlbum
@@ -18,14 +18,20 @@
 		* @param {Object} song
 		*/
 		var setSong = function(song) {
-		   if (currentBuzzObject) {
-		       stopSong(song);
-		   }
+		    if (currentBuzzObject) {
+		        stopSong(song);
+		    }
 		 
-		   currentBuzzObject = new buzz.sound(song.audioUrl, {
-		       formats: ['mp3'],
-		       preload: true
-		   });
+		    currentBuzzObject = new buzz.sound(song.audioUrl, {
+		        formats: ['mp3'],
+		        preload: true
+		    });
+
+		    currentBuzzObject.bind('timeupdate', function() {
+         		$rootScope.$apply(function() {
+              	SongPlayer.currentTime = currentBuzzObject.getTime();
+         	});
+     	});
 		 
 		   SongPlayer.currentSong = song;
 		};
@@ -61,6 +67,11 @@
 		*/
 		SongPlayer.currentSong = null;
 		/**
+ 		* @desc Current playback time (in seconds) of currently playing song
+ 		* @type {Number}
+ 		*/
+		SongPlayer.currentTime = null;
+		/**
 		* @method SongPlayer.play
 		* @desc Sets/Plays song if song clicked is not current song and plays song if current song is paused
 		* @param {Object} song
@@ -72,7 +83,7 @@
 				playSong(song);
 			} else if (SongPlayer.currentSong === song) {
 				if (currentBuzzObject.isPaused()) {
-					playSong(song);
+					playSong();
 				} else {
 					currentBuzzObject.pause();
 					song.playing = false;
@@ -126,11 +137,21 @@
      			playSong(song);
      		}
  		};
+ 		/**
+ 		* @function setCurrentTime
+ 		* @desc Set current time (in seconds) of currently playing song
+ 		* @param {Number} time
+ 		*/
+ 		SongPlayer.setCurrentTime = function(time) {
+     		if (currentBuzzObject) {
+         		currentBuzzObject.setTime(time);
+     		}
+ 		};
 
 		return SongPlayer;
 	}
 
 	angular
 		.module("blocJams")
-		.factory("SongPlayer", ["Fixtures", SongPlayer]);
+		.factory("SongPlayer", ["$rootScope", "Fixtures", SongPlayer]);
 })();
