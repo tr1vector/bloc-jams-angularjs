@@ -87,8 +87,13 @@
 				setSong(song);
 				playSong(song);
 			} else if (SongPlayer.currentSong === song) {
-				if (currentBuzzObject.isPaused()) {
-					playSong();
+				if (!currentBuzzObject) {
+					//Play the first song
+					var firstSong = currentAlbum.songs[0];
+					setSong(firstSong);
+					playSong(firstSong);
+				} else if (currentBuzzObject.isPaused()) {
+					playSong(song);
 				} else {
 					currentBuzzObject.pause();
 					song.playing = false;
